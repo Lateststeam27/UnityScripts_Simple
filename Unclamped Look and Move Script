@@ -1,0 +1,77 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class PlayerController : MonoBehaviour
+{
+    private Vector2 Rotation = Vector2.zero;
+    public float LookSpeed = 180f;
+    public float MoveSpeed = 30f;
+
+    public void Look()
+    {
+        Rotation.y = Input.GetAxis("Mouse X");
+        Rotation.x = -Input.GetAxis("Mouse Y");
+
+        transform.Rotate(new Vector3(Rotation.x * LookSpeed * Time.deltaTime, Rotation.y * LookSpeed * Time.deltaTime, 0), Space.Self);
+
+        //For Rotating Side to Side
+        if (Input.GetKey(KeyCode.E))
+        {
+            transform.Rotate(Vector3.forward, -LookSpeed * Time.deltaTime);
+        }
+
+        if (Input.GetKey(KeyCode.Q))
+        {
+            transform.Rotate(Vector3.forward, LookSpeed * Time.deltaTime);
+        }
+    }
+
+    public void Movement()
+    {
+        if (Input.GetKey(KeyCode.W))
+        {
+            transform.Translate(Vector3.forward * MoveSpeed * Time.deltaTime);
+        }
+
+        if (Input.GetKey(KeyCode.S))
+        {
+            transform.Translate(Vector3.back * MoveSpeed * Time.deltaTime);
+        }
+
+        if (Input.GetKey(KeyCode.A))
+        {
+            transform.Translate(Vector3.left * MoveSpeed * Time.deltaTime);
+        }
+
+        if (Input.GetKey(KeyCode.D))
+        {
+            transform.Translate(Vector3.right * MoveSpeed * Time.deltaTime);
+        }
+
+        //For Moving Up and Down
+        if (Input.GetKey(KeyCode.Space))
+        {
+            transform.Translate(Vector3.up * MoveSpeed * Time.deltaTime);
+        }
+
+        if (Input.GetKey(KeyCode.C) || Input.GetKey(KeyCode.LeftControl))
+        {
+            transform.Translate(Vector3.down * MoveSpeed * Time.deltaTime);
+        }
+    }
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        Look();
+        Movement();
+    }
+}
