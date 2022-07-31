@@ -2,76 +2,112 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour
+public class TutorialLook : MonoBehaviour
 {
-    private Vector2 Rotation = Vector2.zero;
-    public float LookSpeed = 180f;
-    public float MoveSpeed = 30f;
 
-    public void Look()
+    [Header("Object Controlled")]
+    public Transform Camera;
+    [Space]
+
+
+    [Header("Object Look Controlls")]
+    public float LookSensitivity = 30f;
+    [Space]
+
+
+    [Header("Object Move Controlls")]
+    public float MoveSensitivity = 1000f;
+    public float MoveSpeed = 10f;
+    public float RollSensitivity = 0.5f;
+    public float RollSpeed = 0.5f;
+    [Space]
+
+
+    [Header("Camera Look Variables")]
+    float xSmooth, ySmooth, zSmooth;
+    float axisY, axisX, axisZ;
+    float xVelocity, yVelocity;
+    [Space]
+
+  
+    Transform thisTransform;
+    Rigidbody thisRigidbody;
+
+
+    void Awake()
     {
-        Rotation.y = Input.GetAxis("Mouse X");
-        Rotation.x = -Input.GetAxis("Mouse Y");
+        thisTransform = transform;
 
-        transform.Rotate(new Vector3(Rotation.x * LookSpeed * Time.deltaTime, Rotation.y * LookSpeed * Time.deltaTime, 0), Space.Self);
+        thisRigidbody = GetComponent<Rigidbody>();
+        thisRigidbody.constraints = RigidbodyConstraints.FreezeRotation;
+        thisRigidbody.useGravity = false;
 
-        //For Rotating Side to Side
-        if (Input.GetKey(KeyCode.E))
-        {
-            transform.Rotate(Vector3.forward, -LookSpeed * Time.deltaTime);
-        }
-
-        if (Input.GetKey(KeyCode.Q))
-        {
-            transform.Rotate(Vector3.forward, LookSpeed * Time.deltaTime);
-        }
-    }
-
-    public void Movement()
-    {
-        if (Input.GetKey(KeyCode.W))
-        {
-            transform.Translate(Vector3.forward * MoveSpeed * Time.deltaTime);
-        }
-
-        if (Input.GetKey(KeyCode.S))
-        {
-            transform.Translate(Vector3.back * MoveSpeed * Time.deltaTime);
-        }
-
-        if (Input.GetKey(KeyCode.A))
-        {
-            transform.Translate(Vector3.left * MoveSpeed * Time.deltaTime);
-        }
-
-        if (Input.GetKey(KeyCode.D))
-        {
-            transform.Translate(Vector3.right * MoveSpeed * Time.deltaTime);
-        }
-
-        //For Moving Up and Down
-        if (Input.GetKey(KeyCode.Space))
-        {
-            transform.Translate(Vector3.up * MoveSpeed * Time.deltaTime);
-        }
-
-        if (Input.GetKey(KeyCode.C) || Input.GetKey(KeyCode.LeftControl))
-        {
-            transform.Translate(Vector3.down * MoveSpeed * Time.deltaTime);
-        }
-    }
-
-    // Start is called before the first frame update
-    void Start()
-    {
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
     }
 
-    // Update is called once per frame
-    void Update()
+
+    void FixedUpdate()
     {
         Look();
         Movement();
     }
+
+    void Look()
+    {
+        Camera.rotation = Quaternion.Slerp(Camera.rotation, thisTransform.rotation, Time.deltaTime * 4.0f);
+        Camera.position = thisTransform.position;
+
+        axisX = Input.GetAxisRaw("Mouse X") * 0.075f * LookSensitivity;
+        axisY = Input.GetAxisRaw("Mouse Y") * -0.075f * LookSensitivity;
+        axisZ = Input.GetAxis("SideRotation") * RollSensitivity;
+
+        axisX = Mathf.Clamp(axisX, -18.0f, 18.0f);
+        axisY = Mathf.Clamp(axisY, -18.0f, 18.0f);
+        axisZ = Mathf.Clamp(axisZ, -30.0f, 30.0f);
+
+        xSmooth = Mathf.SmoothDamp(xSmooth, axisX, ref xVelocity, 0.1f);
+        ySmooth = Mathf.SmoothDamp(ySmooth, axisY, ref yVelocity, 0.1f);
+        zSmooth = Mathf.Lerp(zSmooth, axisZ, Time.smoothDeltaTime * RollSpeed);
+
+        thisTransform.Rotate(ySmooth, xSmooth, zSmooth);
+    }
+
+
+    void Movement()
+    {
+        
+        if (Input.GetKey(KeyCode.W)) 
+        {
+            thisRigidbody.AddRelativeForce(Vector3.forward * MoveSpeed * MoveSensitivity * Time.smoothDeltaTime);
+        }
+
+        if (Input.GetKey(KeyCode.S))
+        {
+            thisRigidbody.AddRelativeForce(Vector3.back * MoveSpeed * MoveSensitivity * Time.smoothDeltaTime);
+        }
+
+        if (Input.GetKey(KeyCode.A))
+        {
+            thisRigidbody.AddRelativeForce(Vector3.left * MoveSpeed * MoveSensitivity * Time.smoothDeltaTime);
+        }
+
+        if (Input.GetKey(KeyCode.D))
+        {
+            thisRigidbody.AddRelativeForce(Vector3.right * MoveSpeed * MoveSensitivity * Time.smoothDeltaTime);
+        }
+
+        if (Input.GetKey(KeyCode.Space))
+        {
+            thisRigidbody.AddRelativeForce(Vector3.up * MoveSpeed * MoveSensitivity * Time.smoothDeltaTime);
+        }
+
+        if (Input.GetKey(KeyCode.C))
+        {
+            thisRigidbody.AddRelativeForce(Vector3.down * MoveSpeed * MoveSensitivity * Time.smoothDeltaTime);
+        }
+        
+
+    }
+     
 }
