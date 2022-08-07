@@ -14,22 +14,24 @@ public class TutorialLook : MonoBehaviour
     public float LookSensitivity = 30f;
     [Space]
 
-
-    [Header("Object Move Controlls")]
-    public float MoveSensitivity = 1000f;
-    public float MoveSpeed = 10f;
-    public float RollSensitivity = 0.5f;
-    public float RollSpeed = 0.5f;
-    [Space]
-
-
     [Header("Camera Look Variables")]
     float xSmooth, ySmooth, zSmooth;
     float axisY, axisX, axisZ;
     float xVelocity, yVelocity;
     [Space]
 
-  
+
+    [Header("Object Move Controlls")]
+    public float MoveSensitivity = 1000f;
+    public float MoveSpeed = 10f;
+    private float MoveForward, MoveRight, MoveUp;
+
+    public float RollSensitivity = 0.5f;
+    public float RollSpeed = 0.5f;
+    [Space]
+
+
+     
     Transform thisTransform;
     Rigidbody thisRigidbody;
 
@@ -60,7 +62,7 @@ public class TutorialLook : MonoBehaviour
 
         axisX = Input.GetAxisRaw("Mouse X") * 0.075f * LookSensitivity;
         axisY = Input.GetAxisRaw("Mouse Y") * -0.075f * LookSensitivity;
-        axisZ = Input.GetAxis("SideRotation") * RollSensitivity;
+        axisZ = Input.GetAxis("Roll") * RollSensitivity;
 
         axisX = Mathf.Clamp(axisX, -18.0f, 18.0f);
         axisY = Mathf.Clamp(axisY, -18.0f, 18.0f);
@@ -76,38 +78,13 @@ public class TutorialLook : MonoBehaviour
 
     void Movement()
     {
-        
-        if (Input.GetKey(KeyCode.W)) 
-        {
-            thisRigidbody.AddRelativeForce(Vector3.forward * MoveSpeed * MoveSensitivity * Time.smoothDeltaTime);
-        }
+        //Need to Have Input Axis added into Unity Inputs
+        MoveForward = Input.GetAxis("Forward") * MoveSpeed * MoveSensitivity;
+        MoveRight = Input.GetAxis("Right") * -MoveSpeed * MoveSensitivity;
+        MoveUp = Input.GetAxis("Up") * MoveSpeed * MoveSensitivity;
 
-        if (Input.GetKey(KeyCode.S))
-        {
-            thisRigidbody.AddRelativeForce(Vector3.back * MoveSpeed * MoveSensitivity * Time.smoothDeltaTime);
-        }
+        Vector3 Moving = Vector3.forward * MoveForward + Vector3.right * MoveRight + Vector3.up * MoveUp;
+        thisRigidbody.AddRelativeForce(Moving * Time.smoothDeltaTime);
 
-        if (Input.GetKey(KeyCode.A))
-        {
-            thisRigidbody.AddRelativeForce(Vector3.left * MoveSpeed * MoveSensitivity * Time.smoothDeltaTime);
-        }
-
-        if (Input.GetKey(KeyCode.D))
-        {
-            thisRigidbody.AddRelativeForce(Vector3.right * MoveSpeed * MoveSensitivity * Time.smoothDeltaTime);
-        }
-
-        if (Input.GetKey(KeyCode.Space))
-        {
-            thisRigidbody.AddRelativeForce(Vector3.up * MoveSpeed * MoveSensitivity * Time.smoothDeltaTime);
-        }
-
-        if (Input.GetKey(KeyCode.C))
-        {
-            thisRigidbody.AddRelativeForce(Vector3.down * MoveSpeed * MoveSensitivity * Time.smoothDeltaTime);
-        }
-        
-
-    }
-     
+    }   
 }
