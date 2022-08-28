@@ -2,48 +2,28 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TutorialLook : MonoBehaviour
+public class SpaceMovement : MonoBehaviour
 {
-
-    [Header("Object Controlled")]
-    public Transform Camera;
-    [Space]
-
-
     [Header("Object Look Controlls")]
     public float LookSensitivity = 30f;
-    [Space]
-
-    [Header("Camera Look Variables")]
-    float xSmooth, ySmooth, zSmooth;
-    float axisY, axisX, axisZ;
-    float xVelocity, yVelocity;
-    [Space]
-
 
     [Header("Object Move Controlls")]
     public float MoveSensitivity = 1000f;
     public float MoveSpeed = 10f;
-    private float MoveForward, MoveRight, MoveUp;
-
     public float RollSensitivity = 0.5f;
     public float RollSpeed = 0.5f;
-    [Space]
 
 
-     
-    Transform thisTransform;
-    Rigidbody thisRigidbody;
+    private float axisY, axisX, axisZ;
+    private float xSmooth, ySmooth, zSmooth;
+    private float xVelocity, yVelocity;
+    private Rigidbody thisRigidbody;
 
 
     void Awake()
     {
-        thisTransform = transform;
         thisRigidbody = GetComponent<Rigidbody>();
-        thisRigidbody.useGravity = false;
-        //Hide Cursor
         Cursor.visible = false;
-        //Set Cursor to center of screen
         Cursor.lockState = CursorLockMode.Locked;
     }
 
@@ -68,19 +48,19 @@ public class TutorialLook : MonoBehaviour
         ySmooth = Mathf.SmoothDamp(ySmooth, axisY, ref yVelocity, 0.1f);
         zSmooth = Mathf.Lerp(zSmooth, axisZ, Time.smoothDeltaTime * RollSpeed);
 
-        thisTransform.Rotate(ySmooth, xSmooth, zSmooth);
+        transform.Rotate(ySmooth, xSmooth, zSmooth);
     }
 
 
     void Movement()
     {
         //Need to Have Input Axis added into Unity Inputs
-        MoveForward = Input.GetAxis("Forward") * MoveSpeed * MoveSensitivity;
-        MoveRight = Input.GetAxis("Right") * -MoveSpeed * MoveSensitivity;
-        MoveUp = Input.GetAxis("Up") * MoveSpeed * MoveSensitivity;
+        float MoveForward = Input.GetAxis("Forward") * MoveSpeed * MoveSensitivity;
+        float MoveRight = Input.GetAxis("Right") * -MoveSpeed * MoveSensitivity;
+        float MoveUp = Input.GetAxis("Up") * MoveSpeed * MoveSensitivity;
 
         Vector3 Moving = Vector3.forward * MoveForward + Vector3.right * MoveRight + Vector3.up * MoveUp;
         thisRigidbody.AddRelativeForce(Moving * Time.smoothDeltaTime);
 
-    }   
+    }
 }
