@@ -57,9 +57,6 @@ public class TutorialLook : MonoBehaviour
 
     void Look()
     {
-        Camera.rotation = Quaternion.Slerp(Camera.rotation, thisTransform.rotation, Time.deltaTime * 4.0f);
-        Camera.position = thisTransform.position;
-
         axisX = Input.GetAxisRaw("Mouse X") * 0.075f * LookSensitivity;
         axisY = Input.GetAxisRaw("Mouse Y") * -0.075f * LookSensitivity;
         axisZ = Input.GetAxis("Roll") * RollSensitivity;
