@@ -39,12 +39,11 @@ public class TutorialLook : MonoBehaviour
     void Awake()
     {
         thisTransform = transform;
-
         thisRigidbody = GetComponent<Rigidbody>();
-        thisRigidbody.constraints = RigidbodyConstraints.FreezeRotation;
         thisRigidbody.useGravity = false;
-
+        //Hide Cursor
         Cursor.visible = false;
+        //Set Cursor to center of screen
         Cursor.lockState = CursorLockMode.Locked;
     }
 
